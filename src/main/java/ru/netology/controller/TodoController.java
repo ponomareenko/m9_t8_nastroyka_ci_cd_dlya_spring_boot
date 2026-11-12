@@ -55,4 +55,14 @@ public class TodoController {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ошибка! Задача не обновлена.");
     }
+
+    // удалить задачу
+    @DeleteMapping("/tasks/{id}")
+    public ResponseEntity<String> deleteTask(@PathVariable("id") int id) {
+        if (todoService.deleteTask(id)) {
+            return ResponseEntity.ok("Успешно! Задача удалена.");
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ошибка! Задачи не существует.");
+    }
 }
