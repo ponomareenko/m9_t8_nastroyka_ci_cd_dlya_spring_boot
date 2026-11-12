@@ -36,8 +36,12 @@ public class TodoController {
 
     // добавить задачу
     @PostMapping("/tasks")
-    public void createTask(@RequestBody CreateTaskRequest createTaskRequest) {
-        todoService.setTaskList(createTaskRequest.title());
+    public ResponseEntity<String> createTask(@RequestBody CreateTaskRequest createTaskRequest) {
+        if (todoService.setTaskList(createTaskRequest.title())) {
+            return ResponseEntity.ok("Успешно! Задача добавлена.");
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ошибка! Задача не добавлена.");
     }
 
     // получить все задачи
