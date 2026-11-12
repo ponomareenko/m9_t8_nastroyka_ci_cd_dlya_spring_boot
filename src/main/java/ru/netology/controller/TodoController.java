@@ -1,9 +1,8 @@
 package ru.netology.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.netology.dto.CreateTaskRequest;
 import ru.netology.dto.TaskResponse;
 import ru.netology.model.StatusTask;
 import ru.netology.model.Task;
@@ -14,13 +13,11 @@ public class TodoController {
     private final TodoService todoService;
     private Task taskQuery;
 
-//        todoService.setTaskList("test one");
-//        todoService.setTaskList("test two");
-
     public TodoController(TodoService todoService) {
         this.todoService = todoService;
     }
 
+    // показать задачу
     @GetMapping("/tasks/{id}")
     public ResponseEntity<TaskResponse> getTask(@PathVariable("id") int id) {
         System.out.println(todoService.getTaskList().size());
@@ -35,5 +32,11 @@ public class TodoController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+    // добавить задачу
+    @PostMapping("/tasks")
+    public void createTask(@RequestBody CreateTaskRequest createTaskRequest) {
+        todoService.setTaskList(createTaskRequest.title());
     }
 }
