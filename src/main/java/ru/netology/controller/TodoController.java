@@ -2,6 +2,7 @@ package ru.netology.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.netology.dto.AllTasksResponse;
 import ru.netology.dto.CreateTaskRequest;
 import ru.netology.dto.TaskResponse;
 import ru.netology.model.StatusTask;
@@ -38,5 +39,11 @@ public class TodoController {
     @PostMapping("/tasks")
     public void createTask(@RequestBody CreateTaskRequest createTaskRequest) {
         todoService.setTaskList(createTaskRequest.title());
+    }
+
+    // получить все задачи
+    @GetMapping("/tasks")
+    public AllTasksResponse allTasksResponse() {
+        return new AllTasksResponse(todoService.getTaskList().toArray(Task[]::new));
     }
 }
