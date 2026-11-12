@@ -32,26 +32,6 @@ public class TodoController {
         return todoService.getTask(0).getTitle();
     }
 
-//    // SAVE
-//    @GetMapping("/tasks/{id}")
-//    public TaskResponse getTask(@PathVariable("id") int id) {
-//        todoService.setTaskList("test one", "IN_PROGRESS");
-//        todoService.setTaskList("test two", "COMPLETED");
-//
-//        taskQuery = todoService.getTask(id);
-//
-//        if (taskQuery != null) {
-//            return new TaskResponse(taskQuery.getId(),
-//                    taskQuery.getTitle(),
-//                    taskQuery.getStatus(),
-//                    taskQuery.getCreatedAt());
-//        }
-//
-////        return ResponseEntity.notFound().build();
-//        return new TaskResponse(-1, "", "", "");
-//    }
-
-
     @GetMapping("/tasks/{id}")
     public ResponseEntity<TaskResponse> getTask(@PathVariable("id") int id) {
         todoService.setTaskList("test one", "IN_PROGRESS");
