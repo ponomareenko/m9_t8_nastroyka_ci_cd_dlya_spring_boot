@@ -1,11 +1,12 @@
 package ru.netology.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.netology.dto.AllTasksResponse;
-import ru.netology.dto.CreateTaskRequest;
-import ru.netology.dto.TaskResponse;
-import ru.netology.model.StatusTask;
+import ru.netology.dto.request.UpdateTaskRequest;
+import ru.netology.dto.response.AllTasksResponse;
+import ru.netology.dto.request.CreateTaskRequest;
+import ru.netology.dto.response.TaskResponse;
 import ru.netology.model.Task;
 import ru.netology.service.TodoService;
 
@@ -21,8 +22,6 @@ public class TodoController {
     // показать задачу
     @GetMapping("/tasks/{id}")
     public ResponseEntity<TaskResponse> getTask(@PathVariable("id") int id) {
-        System.out.println(todoService.getTaskList().size());
-
         taskQuery = todoService.getTask(id);
 
         if (taskQuery != null) {
@@ -45,5 +44,15 @@ public class TodoController {
     @GetMapping("/tasks")
     public AllTasksResponse allTasksResponse() {
         return new AllTasksResponse(todoService.getTaskList().toArray(Task[]::new));
+    }
+
+    // обновить задачу
+    @PutMapping("/tasks/{id}")
+    public ResponseEntity<String> updateTask(@PathVariable("id") int id, @RequestBody UpdateTaskRequest updateTaskRequest) {
+        if (todoService.updateTask(id, updateTaskRequest.status())) {
+            return ResponseEntity.ok("Успешно! Задача обновлена.");
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ошибка! Задача не обновлена.");
     }
 }

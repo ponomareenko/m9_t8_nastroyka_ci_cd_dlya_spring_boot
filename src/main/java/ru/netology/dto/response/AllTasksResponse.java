@@ -1,4 +1,4 @@
-package ru.netology.dto;
+package ru.netology.dto.response;
 
 import ru.netology.model.Task;
 

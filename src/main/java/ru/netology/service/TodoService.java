@@ -41,4 +41,14 @@ public class TodoService {
     private int increaseId() {
         return genId.incrementAndGet();
     }
+
+    public boolean updateTask(int id, boolean status) {
+        for(Task taskCount : todoRepository.getTaskList()) {
+            if (id == taskCount.getId()) {
+                taskCount.setStatus(status);
+                return true;
+            }
+        }
+        return false;
+    }
 }
