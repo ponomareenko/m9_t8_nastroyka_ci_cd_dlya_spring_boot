@@ -14,15 +14,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class TodoService {
     private final TodoRepository todoRepository;
-    private LocalDateTime dateTime;
-    private AtomicInteger genId = new AtomicInteger(0);
+    private AtomicInteger genId = new AtomicInteger(1); // TODO: заменить на 0
 
     public TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
 
     public void setTaskList(String title) {
-        todoRepository.setTaskList(increaseId(), title, false, dateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        todoRepository.setTaskList(increaseId(), title, false, LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
     }
 
     public List<Task> getTaskList() {

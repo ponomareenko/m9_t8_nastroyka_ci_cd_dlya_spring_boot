@@ -14,14 +14,16 @@ public class TodoController {
     private final TodoService todoService;
     private Task taskQuery;
 
+//        todoService.setTaskList("test one");
+//        todoService.setTaskList("test two");
+
     public TodoController(TodoService todoService) {
         this.todoService = todoService;
     }
 
     @GetMapping("/tasks/{id}")
     public ResponseEntity<TaskResponse> getTask(@PathVariable("id") int id) {
-        todoService.setTaskList("test one");
-        todoService.setTaskList("test two");
+        System.out.println(todoService.getTaskList().size());
 
         taskQuery = todoService.getTask(id);
 
