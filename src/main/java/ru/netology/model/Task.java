@@ -3,10 +3,10 @@ package ru.netology.model;
 public class Task {
     private int id;
     private String title;
-    private String status;
+    private boolean status;
     private String createdAt;
 
-    public Task(int id, String title, String status, String createdAt) {
+    public Task(int id, String title, boolean status, String createdAt) {
         this.id = id;
         this.title = title;
         this.status = status;
@@ -21,7 +21,7 @@ public class Task {
         return title;
     }
 
-    public String getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
@@ -37,7 +37,7 @@ public class Task {
         this.title = title;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

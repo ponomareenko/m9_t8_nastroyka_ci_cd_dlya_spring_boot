@@ -21,8 +21,8 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public void setTaskList(String title, String status) {
-        todoRepository.setTaskList(increaseId(), title, status, dateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+    public void setTaskList(String title) {
+        todoRepository.setTaskList(increaseId(), title, false, dateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
     }
 
     public List<Task> getTaskList() {

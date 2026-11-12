@@ -18,24 +18,10 @@ public class TodoController {
         this.todoService = todoService;
     }
 
-    @GetMapping("/test")
-    public String test() {
-        todoService.setTaskList("test one", "IN_PROGRESS");
-        todoService.setTaskList("test two", "COMPLETED");
-        return todoService.getTaskList().toString();
-    }
-
-    @GetMapping("/test1")
-    public String test1() {
-        todoService.setTaskList("test one", "IN_PROGRESS");
-        todoService.setTaskList("test two", "COMPLETED");
-        return todoService.getTask(0).getTitle();
-    }
-
     @GetMapping("/tasks/{id}")
     public ResponseEntity<TaskResponse> getTask(@PathVariable("id") int id) {
-        todoService.setTaskList("test one", "IN_PROGRESS");
-        todoService.setTaskList("test two", "COMPLETED");
+        todoService.setTaskList("test one");
+        todoService.setTaskList("test two");
 
         taskQuery = todoService.getTask(id);
 
