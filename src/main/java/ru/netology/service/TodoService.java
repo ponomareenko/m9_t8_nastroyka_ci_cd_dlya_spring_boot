@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class TodoService {
     private final TodoRepository todoRepository;
-    private AtomicInteger genId = new AtomicInteger(0);
+    private final AtomicInteger genId = new AtomicInteger(0);
 
     public TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
@@ -23,14 +23,7 @@ public class TodoService {
     }
 
     public synchronized List<Task> getTaskList() {
-        return todoRepository.getTaskList().stream()
-                .map(task -> new Task(
-                        task.getId(),
-                        task.getTitle(),
-                        task.getStatus(),
-                        task.getCreatedAt()
-                ))
-                .toList();
+        return todoRepository.getTaskList();
     }
 
     public Task getTask(int id) {
@@ -48,23 +41,31 @@ public class TodoService {
     }
 
     public synchronized boolean updateTask(int id, String title, boolean status) {
-        for(Task taskCount : todoRepository.getTaskList()) {
-            if (id == taskCount.getId()) {
-                taskCount.setStatus(status);
-                taskCount.setTitle(title);
-                return true;
-            }
+        int index = findTaskIndexById(id);
+        if (index != -1) {
+            todoRepository.updateTitle(index, title);
+            todoRepository.updateStatus(index, status);
+            return true;
         }
         return false;
     }
 
     public synchronized boolean deleteTask(int id) {
-        for (int i = 0; i < todoRepository.getTaskList().size(); i++) {
-            if (id == todoRepository.getTaskList().get(i).getId()) {
-                todoRepository.deleteTask(i);
-                return true;
-            }
+        int index = findTaskIndexById(id);
+        if (index != -1) {
+            todoRepository.deleteTask(index);
+            return true;
         }
         return false;
+    }
+
+    private int findTaskIndexById(int id) {
+        List<Task> taskList = todoRepository.getTaskList();
+        for (int i = 0; i < taskList.size(); i++) {
+            if (id == taskList.get(i).getId()) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
