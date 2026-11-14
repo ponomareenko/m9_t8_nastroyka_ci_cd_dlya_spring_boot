@@ -18,7 +18,7 @@ public class TodoRepository {
         return taskList;
     }
 
-    public void deleteTask(int id) {
-        taskList.remove(id);
+    public void deleteTask(int index) {
+        taskList.remove(index);
     }
 }

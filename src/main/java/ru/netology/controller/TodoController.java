@@ -14,7 +14,6 @@ import ru.netology.service.TodoService;
 @RestController
 public class TodoController {
     private final TodoService todoService;
-    private Task taskQuery;
 
     public TodoController(TodoService todoService) {
         this.todoService = todoService;
@@ -23,7 +22,7 @@ public class TodoController {
     // показать задачу
     @GetMapping("/tasks/{id}")
     public ResponseEntity<TaskResponse> getTask(@PathVariable("id") int id) {
-        taskQuery = todoService.getTask(id);
+        Task taskQuery = todoService.getTask(id);
 
         if (taskQuery != null) {
             return ResponseEntity.ok(new TaskResponse(taskQuery.getId(),
@@ -54,7 +53,7 @@ public class TodoController {
     // обновить задачу
     @PutMapping("/tasks/{id}")
     public ResponseEntity<String> updateTask(@PathVariable("id") int id, @Valid @RequestBody UpdateTaskRequest updateTaskRequest) {
-        if (todoService.updateTask(id, updateTaskRequest.status())) {
+        if (todoService.updateTask(id,updateTaskRequest.title(), updateTaskRequest.status())) {
             return ResponseEntity.ok("Успешно! Задача обновлена.");
         }
 

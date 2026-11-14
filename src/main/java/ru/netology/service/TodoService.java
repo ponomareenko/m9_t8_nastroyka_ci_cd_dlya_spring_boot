@@ -18,16 +18,23 @@ public class TodoService {
         this.todoRepository = todoRepository;
     }
 
-    public boolean setTaskList(String title) {
+    public synchronized boolean setTaskList(String title) {
         return todoRepository.setTaskList(increaseId(), title, false, LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
     }
 
-    public List<Task> getTaskList() {
-        return todoRepository.getTaskList();
+    public synchronized List<Task> getTaskList() {
+        return todoRepository.getTaskList().stream()
+                .map(task -> new Task(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getStatus(),
+                        task.getCreatedAt()
+                ))
+                .toList();
     }
 
     public Task getTask(int id) {
-        for(Task taskCount : todoRepository.getTaskList()) {
+        for(Task taskCount : getTaskList()) {
             if (id == taskCount.getId()) {
                 return taskCount;
             }
@@ -40,10 +47,11 @@ public class TodoService {
         return genId.incrementAndGet();
     }
 
-    public boolean updateTask(int id, boolean status) {
+    public synchronized boolean updateTask(int id, String title, boolean status) {
         for(Task taskCount : todoRepository.getTaskList()) {
             if (id == taskCount.getId()) {
                 taskCount.setStatus(status);
+                taskCount.setTitle(title);
                 return true;
             }
         }
