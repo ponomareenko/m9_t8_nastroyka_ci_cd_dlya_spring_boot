@@ -11,6 +11,9 @@ import ru.netology.dto.response.TaskResponse;
 import ru.netology.model.Task;
 import ru.netology.service.TodoService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 public class TodoController {
     private final TodoService todoService;
@@ -24,30 +27,46 @@ public class TodoController {
     public ResponseEntity<TaskResponse> getTask(@PathVariable("id") int id) {
         Task taskQuery = todoService.getTask(id);
 
-        if (taskQuery != null) {
-            return ResponseEntity.ok(new TaskResponse(taskQuery.getId(),
-                    taskQuery.getTitle(),
-                    taskQuery.getStatus(),
-                    taskQuery.getCreatedAt()));
+        if (taskQuery == null) {
+            return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(new TaskResponse(taskQuery.getId(),
+                taskQuery.getTitle(),
+                taskQuery.getStatus(),
+                taskQuery.getCreatedAt()));
     }
 
     // добавить задачу
     @PostMapping("/tasks")
-    public ResponseEntity<String> createTask(@Valid @RequestBody CreateTaskRequest createTaskRequest) {
-        if (todoService.setTaskList(createTaskRequest.title())) {
-            return ResponseEntity.ok("Успешно! Задача добавлена.");
+    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody CreateTaskRequest createTaskRequest) {
+
+        Task createdTask = todoService.setTaskList(createTaskRequest.title());
+        if (createdTask != null) {
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new TaskResponse(createdTask.getId(),
+                            createdTask.getTitle(),
+                            createdTask.getStatus(),
+                            createdTask.getCreatedAt())
+                    );
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ошибка! Задача не добавлена.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     // получить все задачи
     @GetMapping("/tasks")
     public AllTasksResponse allTasksResponse() {
-        return new AllTasksResponse(todoService.getTaskList().toArray(Task[]::new));
+        List<TaskResponse> tasks = todoService.getTaskList().stream()
+                .map(task -> new TaskResponse(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getStatus(),
+                        task.getCreatedAt()
+                ))
+                .toList();
+
+        return new AllTasksResponse(tasks);
     }
 
     // обновить задачу

@@ -1,6 +1,6 @@
 package ru.netology.dto.response;
 
-import ru.netology.model.Task;
+import java.util.List;
 
-public record AllTasksResponse(Task[] tasks) {
+public record AllTasksResponse(List<TaskResponse> tasks) {
 }
