@@ -1,5 +1,6 @@
 package ru.netology.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +37,7 @@ public class TodoController {
 
     // добавить задачу
     @PostMapping("/tasks")
-    public ResponseEntity<String> createTask(@RequestBody CreateTaskRequest createTaskRequest) {
+    public ResponseEntity<String> createTask(@Valid @RequestBody CreateTaskRequest createTaskRequest) {
         if (todoService.setTaskList(createTaskRequest.title())) {
             return ResponseEntity.ok("Успешно! Задача добавлена.");
         }
@@ -52,7 +53,7 @@ public class TodoController {
 
     // обновить задачу
     @PutMapping("/tasks/{id}")
-    public ResponseEntity<String> updateTask(@PathVariable("id") int id, @RequestBody UpdateTaskRequest updateTaskRequest) {
+    public ResponseEntity<String> updateTask(@PathVariable("id") int id, @Valid @RequestBody UpdateTaskRequest updateTaskRequest) {
         if (todoService.updateTask(id, updateTaskRequest.status())) {
             return ResponseEntity.ok("Успешно! Задача обновлена.");
         }

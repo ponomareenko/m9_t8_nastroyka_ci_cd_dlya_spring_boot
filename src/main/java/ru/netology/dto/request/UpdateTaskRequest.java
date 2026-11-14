@@ -1,4 +1,6 @@
 package ru.netology.dto.request;
 
-public record UpdateTaskRequest(boolean status) {
+import jakarta.validation.constraints.NotNull;
+
+public record UpdateTaskRequest(@NotNull boolean status) {
 }

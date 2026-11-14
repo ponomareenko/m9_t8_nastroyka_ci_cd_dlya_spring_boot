@@ -1,4 +1,6 @@
 package ru.netology.dto.request;
 
-public record CreateTaskRequest(String title) {
+import jakarta.validation.constraints.NotBlank;
+
+public record CreateTaskRequest(@NotBlank String title) {
 }
