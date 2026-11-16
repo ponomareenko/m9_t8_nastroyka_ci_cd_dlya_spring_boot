@@ -14,6 +14,10 @@ public class TodoRepository {
         return taskList.add(new Task(id, title, status, createdAt));
     }
 
+    public boolean setTaskList(Task task) {
+        return taskList.add(task);
+    }
+
     public List<Task> getTaskList() {
         return taskList.stream()
                 .map(task -> new Task(
