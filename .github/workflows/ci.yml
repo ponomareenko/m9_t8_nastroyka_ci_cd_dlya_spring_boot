@@ -2,6 +2,8 @@ name: Push exercise
 
 on:
   push:
+    branches:
+      - main
 
 concurrency:
   group: todo-api-test-deployment

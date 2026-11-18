@@ -1,0 +1,58 @@
+#!/bin/bash
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  printf 'Использование: switch-todo PORT\n' >&2
+  exit 1
+fi
+
+case "$1" in
+  8080|8081)
+    TARGET_PORT="$1"
+    ;;
+  *)
+    printf 'Ошибка: разрешены только порты 8080 и 8081.\n' >&2
+    exit 1
+    ;;
+esac
+
+printf 'Запрошено переключение на порт %s\n' "$TARGET_PORT"
+
+CONFIG=/etc/nginx/sites-available/todo-api
+TEMP_CONFIG=$(mktemp)
+trap 'rm -f "$TEMP_CONFIG"' EXIT
+
+MATCH_COUNT=$(grep -Ec '^[[:space:]]*proxy_pass http://127\.0\.0\.1:(8080|8081);[[:space:]]*$' "$CONFIG" || true)
+
+if [ "$MATCH_COUNT" -ne 1 ]; then
+  printf 'Ошибка: ожидалась ровно одна строка proxy_pass, найдено: %s\n' "$MATCH_COUNT" >&2
+  exit 1
+fi
+
+sed -E \
+  "s#^([[:space:]]*proxy_pass http://127\.0\.0\.1:)(8080|8081)(;[[:space:]]*)\$#\1${TARGET_PORT}\3#" \
+  "$CONFIG" > "$TEMP_CONFIG"
+
+printf 'Подготовленная конфигурация:\n'
+cat "$TEMP_CONFIG"
+
+BACKUP_CONFIG=$(mktemp)
+cp -p "$CONFIG" "$BACKUP_CONFIG"
+trap 'rm -f "$TEMP_CONFIG" "$BACKUP_CONFIG"' EXIT
+
+cp "$TEMP_CONFIG" "$CONFIG"
+
+if nginx -t && systemctl reload nginx; then
+  printf 'Nginx переключён на порт %s\n' "$TARGET_PORT"
+else
+  printf 'Ошибка переключения. Восстанавливаем прежнюю конфигурацию.\n' >&2
+  cp -p "$BACKUP_CONFIG" "$CONFIG"
+
+  if nginx -t && systemctl reload nginx; then
+    printf 'Прежняя конфигурация восстановлена и применена.\n' >&2
+  else
+    printf 'Ошибка восстановления: требуется ручная проверка Nginx.\n' >&2
+  fi
+
+  exit 1
+fi
