@@ -3,6 +3,10 @@ name: Push exercise
 on:
   push:
 
+concurrency:
+  group: todo-api-test-deployment
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-24.04
@@ -39,7 +43,7 @@ jobs:
         run: docker build -t "ghcr.io/ponomareenko/todo-api:${GITHUB_SHA}" .
       - name: Push Docker image
         run: docker push "ghcr.io/ponomareenko/todo-api:${GITHUB_SHA}"
-      - name: Check SSH connection
+      - name: Deploy application
         uses: appleboy/ssh-action@v1
         env:
           IMAGE_TAG: ${{ github.sha }}
@@ -52,9 +56,7 @@ jobs:
           envs: IMAGE_TAG
           script: |
             set -e
-            whoami
-            docker ps
-            docker pull "ghcr.io/ponomareenko/todo-api:${IMAGE_TAG}"
+            bash /home/deploy/deploy-todo.sh "$IMAGE_TAG"
       - name: Notify Telegram
         if: always()
         env:
