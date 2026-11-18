@@ -15,8 +15,8 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
-      - name: Simulate failure
-        run: exit 1
+#      - name: Simulate failure
+#        run: exit 1
       - name: Build and test
         run: ./mvnw -B clean verify
       - name: Upload application JAR
@@ -26,6 +26,8 @@ jobs:
           path: target/*.jar
           if-no-files-found: error
           retention-days: 7
+      - name: Build Docker image
+        run: docker build -t todo-api:ci .
       - name: Notify Telegram
         if: always()
         env:
