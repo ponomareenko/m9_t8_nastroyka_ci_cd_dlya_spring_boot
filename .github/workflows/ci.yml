@@ -41,16 +41,20 @@ jobs:
         run: docker push "ghcr.io/ponomareenko/todo-api:${GITHUB_SHA}"
       - name: Check SSH connection
         uses: appleboy/ssh-action@v1
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           fingerprint: ${{ secrets.SSH_HOST_FINGERPRINT }}
+          envs: IMAGE_TAG
           script: |
             set -e
             whoami
             docker ps
+            docker pull "ghcr.io/ponomareenko/todo-api:${IMAGE_TAG}"
       - name: Notify Telegram
         if: always()
         env:
