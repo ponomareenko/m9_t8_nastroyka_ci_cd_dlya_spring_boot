@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
@@ -26,8 +29,16 @@ jobs:
           path: target/*.jar
           if-no-files-found: error
           retention-days: 7
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker image
-        run: docker build -t todo-api:ci .
+        run: docker build -t "ghcr.io/ponomareenko/todo-api:${GITHUB_SHA}" .
+      - name: Push Docker image
+        run: docker push "ghcr.io/ponomareenko/todo-api:${GITHUB_SHA}"
       - name: Notify Telegram
         if: always()
         env:
